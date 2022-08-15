@@ -51,4 +51,3 @@ void main() {
         std::cout << x << "\n";
     }
 }
-
