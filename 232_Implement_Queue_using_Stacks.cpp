@@ -1,39 +1,50 @@
+
 #include <vector>
 #include <stack>
 
+using namespace std;
+
 class MyQueue {
+stack<int> input;
+int firstElement;
 public:
-    stack<int> input;
-    stack<int> output;
     MyQueue() {
-        
     }
     
     void push(int x) {
+        if(input.empty()) {
+            firstElement = x;
+        }
         input.push(x);
     }
     
     int pop() {
-        int val = input.top();
-        input.pop();
-        return val;
+        stack<int> output;
+        while(!input.empty()) {
+            int val = input.top();
+            output.push(val);
+            input.pop();
+        }
+        int top = output.top();
+        output.pop();
+        if(output.size() > 0) {
+            firstElement = output.top();
+        } 
+        while(!output.empty()) {
+            int val = output.top();
+            input.push(val);
+            output.pop();
+        }
+        return top;
     }
     
     int peek() {
-        int val = input.pop();
-        stack<int> output;
-        output.push(val)
-        while (input) {
-            int val = input.pop();
-            output.push(val)
-        }
-        input = output;
-        return val;
+        return firstElement;
+        
     }
     
     bool empty() {
-        if(input.empty()) return true;
-            return false;
+        return input.empty();
     }
 };
 
