@@ -1,29 +1,29 @@
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode() : val(0), left(nullptr), right(nullptr) {}
+    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+    TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+};
+
 class Solution {
 private:
-    bool checkNode(TreeNode* node_p, TreeNode* node_q) {
-        if (node_p->val != node_q->val) { return false; }
-        if (node_p->left != nullptr && node_q->right == nullptr) { return false; }
-        if (node_p->right != nullptr && node_q->left == nullptr) { return false; }
-        if (node_q->left != nullptr && node_p->right == nullptr) { return false; }
-        if (node_q->right != nullptr && node_p->left == nullptr) { return false; }
-        if (node_q->right != nullptr) { 
-            auto res = checkNode(node_p->left, node_q->right);
-            if (res == false) {return false; } 
-        };
-        if (node_q->left != nullptr) { 
-            auto res = checkNode(node_p->right, node_q->left);
-            if (res == false) {return false; } 
-        };
+bool checkSymmetrick(TreeNode* rootL, TreeNode* rootR) {
+    if ( rootL == nullptr && rootR == nullptr ) {
         return true;
-    };
+    } 
+    if ( rootL != nullptr && rootR != nullptr && rootL->val == rootR->val ) {
+        bool res = checkSymmetrick(rootL->left, rootR->right) & 
+        checkSymmetrick(rootL->right, rootR->left);
+        return res; 
+    }
+    return false;
+}
+
 public:
     bool isSymmetric(TreeNode* root) {
-        if (root == nullptr) {return true;}
-        if (root->right == nullptr && root->left == nullptr) {return true;}
-        if (root->right == nullptr && root->left != nullptr) {return false;}
-        if (root->right != nullptr && root->left == nullptr) {return false;}
-
-        auto res = checkNode(root->right, root->left);
+        auto res = checkSymmetrick(root, root);
         return res;
     }         
 };

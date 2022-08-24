@@ -1,36 +1,82 @@
 #include <vector>
+#include <map>
 using namespace std;
 
 class MedianFinder {
+private:
+    pair<int, int> next(pair<int, int> position, map<int, int>& numbersCount) {
+        map<int, int>::iterator it;
+        if ( position.second ==  numbersCount[position.first] ) {
+            it = numbersCount.find(position.first);
+            it ++ ;
+            position.first = it->first;
+            position.second = 1;
+        } else {
+            position.second ++ ;    
+        }
+        return position;
+    }
+
+    pair<int, int> previous(pair<int, int> position, map<int, int>& numbersCount) {
+        map<int, int>::iterator it;
+        if ( position.second == 1 ) {
+            it = numbersCount.find(position.first);
+            it -- ;
+            position.first = it->first;
+            position.second = numbersCount[position.first];
+        } else {
+            position.second -- ;    
+        }
+        return position;
+    }
 
 public:
-    vector<int> numbers;
-    vector<int> numbersCumCount;
-    int medianaPosition;
+    map<int, int> numbersCount;
+    map<int, int>::iterator it;
+    pair<int, int> medianaPositionL;
+    bool EqualInd;
     
     MedianFinder() {
-        for(int i = 0 ; i < 20000; i ++) {
-            numbersCumCount.push_back(0);
-            medianaPosition = 0;
-        }
+        medianaPositionL = pair(INT_MIN, 0);
     }
     
     void addNum(int num) {
-        numbers.push_back(num);
-        for(int i = num + 10000; i < 2*10000; i ++ ) {
-            numbersCumCount[i] += 1;
+        it = numbersCount.find(num);
+        if (it == numbersCount.end()) {
+            numbersCount[num] = 1;
+        } else {
+            numbersCount[num] ++;
+        }
+        if (medianaPositionL.first == INT_MAX) {
+            medianaPositionL.first = num;
+            medianaPositionL.second = 1;
+            EqualInd = true;
+            return;
+        }
+        if ( medianaPositionL.first <= num ) {
+            if ( !EqualInd ) {
+                medianaPositionL = next(medianaPositionL, numbersCount);
+            }
+            EqualInd = !EqualInd;
+        }
+        if ( medianaPositionL.first > num ) {
+            if ( EqualInd ) {
+                medianaPositionL = previous(medianaPositionL, numbersCount);
+            }
+            EqualInd = !EqualInd;
         }
     }
     
     double findMedian() {
-        double res;
-        if(numbers.size() % 2 == 0) {
-            res = numbers[numbers.size()/2 - 1] + numbers[numbers.size()/2];
-            res /= 2;
-        } else {
-            res = numbers[numbers.size()/2];
+        double medianaValue;
+        if ( medianaPositionL.second == numbersCount[medianaPositionL.first] ) {
+            it = numbersCount.find(medianaPositionL.first);
+            it ++;
+            medianaValue = ( medianaPositionL.first + it->first ) / 2.0;
+            return medianaValue;
         }
-        return res;        
+        medianaValue = medianaPositionL.first;
+        return medianaValue;
     }
 };
 
